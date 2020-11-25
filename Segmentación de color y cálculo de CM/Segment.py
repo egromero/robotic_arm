@@ -11,11 +11,11 @@ if cap.isOpened():
 cv2.namedWindow('frame1')
 cv2.moveWindow('frame1', 30, 100)
 
-cv2.namedWindow('frame2')
-cv2.moveWindow('frame2', 700, 100)
+#cv2.namedWindow('frame2')
+#cv2.moveWindow('frame2', 700, 100)
 
-cv2.namedWindow('frame3')
-cv2.moveWindow('frame3', 365, 150)
+#cv2.namedWindow('frame3')
+#cv2.moveWindow('frame3', 365, 150)
 
 lower_color_red = np.array([155,80,80]) #rangos donde se puede encontrar el rojo
 upper_color_red = np.array([175,255,255]) 
@@ -34,7 +34,8 @@ lower_color_green = np.array([30, 51, 127]) #verde
 upper_color_green = np.array([78, 255, 255])
 
 font = cv2.FONT_HERSHEY_SIMPLEX
-
+t1 = time.time()
+area = 0
 while(True):
 	ret, frame = cap.read()
 	hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) #Cambia los espacios de colores
@@ -44,16 +45,27 @@ while(True):
 	mask2 = cv2.inRange(hsv_frame, lower_color_red, upper_color_red)
 	mask3 = cv2.inRange(hsv_frame, lower_color_pink, upper_color_pink)
 	mask4 = cv2.inRange(hsv_frame, lower_color_green, upper_color_green)
-	mask_color = mask1 + mask0 + mask2 +mask3 + mask4
-	hsv_frame_mask = cv2.bitwise_and(frame,frame, mask= mask0 + mask1 + mask2 + mask3 + mask4) #La máscara anterior la multiplica por los colores originales  
-	
+	mask_color = mask1 + mask0 + mask2 + mask4
+	hsv_frame_mask = cv2.bitwise_and(frame,frame, mask= mask0 + mask1 + mask2 + mask4) #La máscara anterior la multiplica por los colores originales  
+	t2 = time.time() - t1
+	if t2 >= 0.5:
+		cv2.imwrite("img.png", frame[300:])
+		t1 = time.time()
+		data = open("algo.txt", "w")
+		data.write(str(int(area)))
+		data.close()
 	cx0, cy0 = 0, 0
 	M0 = cv2.moments(mask_color)
 	if M0['m00']!=0:
 		cx0 = int(M0['m10']/M0['m00'])
 		cy0 = int(M0['m01']/M0['m00'])
 	cv2.circle(frame, (cx0, cy0), 4, (0,0,255), -1)
-	print(cx0, cy0)
+	area=M0['m00']
+	#print(cx0, cy0)
+	print(f"Area {area}")
+	cv2.imshow("frame1", frame)
+	#cv2.imshow("frame2", mask_color)
+	#cv2.imshow("frame3", hsv_frame_mask)
 
 	
 	
