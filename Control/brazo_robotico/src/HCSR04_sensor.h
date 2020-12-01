@@ -1,1 +1,0 @@
-float medir_distancia();

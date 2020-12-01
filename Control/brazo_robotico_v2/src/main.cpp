@@ -70,7 +70,7 @@ void loop() {
   //enc_act3 = contador_3();
   tiempo = micros();
 
-  float posicion_m1 = (enc_act1)/(2950.0) * 360;
+  float posicion_m1 = (enc_act1)/(pasos*red) * 360;
   Serial.print("Posicion:");
   Serial.println(posicion_m1);
   //float posicion_m2 = (enc_act2 - enc_ant2)/(pasos * red) * 360;
@@ -79,7 +79,6 @@ void loop() {
   enc_ant1 = enc_act1;
   enc_ant2 = enc_act2;
   enc_ant3 = enc_act3;
-  int var = 1000;
   // Control motor 1
   error_1 = ref_1 - posicion_m1;
   PWM_1 = kp_1 * error_1 + ki_1 * error_acum_1 * (tiempo - tiempo_ant) + kd_1 * (error_1 - error_ant_1)/(tiempo -tiempo_ant);
@@ -93,6 +92,7 @@ void loop() {
   //Serial.print(error_1, DEC);
   //Serial.print(" -- ");
   //Serial.println(posicion_m1, DEC);
+
   // Control motor 2
   //error_2 = ref_2 - posicion_m2;
   //PWM_2 = kp_2 * error_2 + ki_2 * error_acum_2 * (tiempo - tiempo_ant) + kd_2 * (error_2 - error_ant_2)/(tiempo -tiempo_ant);

@@ -6,17 +6,20 @@
 volatile long contador1 = 0;
 volatile long contador2 = 0;
 volatile long contador3 = 0;
+portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-void Encoder1A(){
+void IRAM_ATTR Encoder1A(){
+  portENTER_CRITICAL_ISR(&mux);
   if (digitalRead(encoder1PinA) == digitalRead(encoder1PinB)) {
     contador1++;
   } 
   else {
     contador1--;
   }
+  portEXIT_CRITICAL_ISR(&mux);
 }
 
-void Encoder1B(){
+void IRAM_ATTR Encoder1B(){
   if (digitalRead(encoder1PinA) == digitalRead(encoder1PinB)) {
     contador1--;
   } 
@@ -74,8 +77,8 @@ volatile long contador_3(){
 }
 
 void EnBegin(){
-  pinMode(encoder1PinA, INPUT);
-  pinMode(encoder1PinB, INPUT);
+  pinMode(encoder1PinA, INPUT_PULLUP);
+  pinMode(encoder1PinB, INPUT_PULLUP);
   pinMode(encoder2PinA, INPUT_PULLUP);
   pinMode(encoder2PinB, INPUT_PULLUP);
   pinMode(encoder3PinA, INPUT_PULLUP);
