@@ -7,9 +7,9 @@
 
 //Variables Control
 float ref_1 = 180;
-float kp_1 = 1.2;
-float kd_1 = 0;
-float ki_1 = 0;
+float kp_1 = 5;
+float kd_1 = 0.06;
+float ki_1 = 0.1;
 float PWM_1 = 0;
 float error_1 = 0;
 float error_ant_1 = 0;
@@ -48,7 +48,7 @@ long enc_ant2 = 0;
 long enc_act3 = 0;
 long enc_ant3 = 0;
 
-float pasos = 500;
+float pasos = 1024;
 float red = 43;
 
 
@@ -56,23 +56,23 @@ float red = 43;
 void setup(){
   Serial.begin(9600);           //Inicializar el puerto serial (Monitor Serial)
   Serial.println("Comenzando...");
-  MBegin();
+  //MBegin();
   EnBegin();
+  BTbegin("ESPG3");
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   enc_act1 = contador_1();
-  Serial.print("Contador:");
-  Serial.println(enc_act1);
+  //Serial.print("Contador:");
+  //Serial.println(enc_act1);
   //enc_act2 = contador_2();
   //enc_act3 = contador_3();
   tiempo = micros();
-
-  float posicion_m1 = (enc_act1)/(pasos*red) * 360;
-  Serial.print("Posicion:");
-  Serial.println(posicion_m1);
+  float posicion_m1 = (enc_act1)/(2*pasos*red) * 360;
+  //Serial.print("Posicion:");
+  //Serial.println(posicion_m1);
   //float posicion_m2 = (enc_act2 - enc_ant2)/(pasos * red) * 360;
   //float posicion_m3 = (enc_act3 - enc_ant3)/(pasos * red) * 360;
 
@@ -82,7 +82,8 @@ void loop() {
   // Control motor 1
   error_1 = ref_1 - posicion_m1;
   PWM_1 = kp_1 * error_1 + ki_1 * error_acum_1 * (tiempo - tiempo_ant) + kd_1 * (error_1 - error_ant_1)/(tiempo -tiempo_ant);
-  mover_motor_1(PWM_1);
+  //float val = -100;
+  //mover_motor_1(PWM_1);
 
   //error_ant_1 = error_1;
   //error_acum_1 += error_1;
@@ -107,6 +108,7 @@ void loop() {
   //error_ant_3 = error_3;
   //error_acum_3 += error_3;
   
-
+  if (BT_available()){ //se entra cada vez que hay un mensaje disponible
+    Serial.println(BT_read());}
 
 }
